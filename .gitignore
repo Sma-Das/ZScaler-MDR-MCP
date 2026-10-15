@@ -1,0 +1,8 @@
+.env
+.env.*
+!.env.example
+dist/
+go/zscaler-mdr-mcp
+*.log
+*.pem
+*.key
