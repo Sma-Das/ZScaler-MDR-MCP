@@ -156,3 +156,12 @@ func TestListPageCeiling(t *testing.T) {
 		t.Fatalf("unsupported pagination: %#v %v", r, e)
 	}
 }
+
+func TestTrailingJSONRejected(t *testing.T) {
+	c := testClient(t, func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"data":[{"id":123,"attributes":{}}]} {"extra":"untrusted"}`))
+	})
+	if _, e := c.Get(context.Background(), "123"); e == nil {
+		t.Fatal("trailing JSON accepted")
+	}
+}

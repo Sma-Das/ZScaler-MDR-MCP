@@ -139,6 +139,10 @@ func (c *Client) read(ctx context.Context, path string) (envelope, error) {
 	if decoder.Decode(&out) != nil || out.Data == nil {
 		return out, fmt.Errorf("MDR returned an invalid data envelope")
 	}
+	var trailing any
+	if decoder.Decode(&trailing) != io.EOF {
+		return envelope{}, fmt.Errorf("MDR returned trailing data after its envelope")
+	}
 	for _, item := range out.Data {
 		redact(item, c.key)
 	}
@@ -302,7 +306,6 @@ func (c *Client) Timeline(ctx context.Context, raw string, maxPages int) (mdr.Re
 		}
 		if page == maxPages {
 			out.Partial = true
-			out.NextPage = page + 1
 			out.Warnings = append(out.Warnings, "Timeline page ceiling reached")
 		}
 	}
