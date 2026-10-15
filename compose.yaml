@@ -1,0 +1,11 @@
+services:
+  mdr:
+    build: .
+    ports: ["127.0.0.1:3000:3000"]
+    environment:
+      MDR_BASE_URL: ${MDR_BASE_URL:?Set an MDR tenant origin}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,::1}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
